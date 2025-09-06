@@ -1,4 +1,4 @@
-// KONFIGURACJA FIREBASE - wstaw swoje dane
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "1:346817626388:web:4392536d75afabad728201",
   authDomain: "gvideo-e3622.firebaseapp.com",
@@ -8,70 +8,38 @@ const firebaseConfig = {
   appId: "1:346817626388:web:4392536d75afabad728201"
 };
 
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+
 const auth = firebase.auth();
 
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const loginBtn = document.getElementById('loginBtn');
+const registerBtn = document.getElementById('registerBtn');
 const loginError = document.getElementById('loginError');
 const loginSuccess = document.getElementById('loginSuccess');
 
-document.getElementById('loginBtn').addEventListener('click', login);
-document.getElementById('registerBtn').addEventListener('click', register);
-
-// LOGOWANIE
-function login() {
+loginBtn.addEventListener('click', () => {
   loginError.textContent = '';
   loginSuccess.textContent = '';
-
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value.trim();
-
-  if (!email || !password) {
-    loginError.textContent = 'Wpisz email i hasło!';
-    return;
-  }
-
-  auth.signInWithEmailAndPassword(email, password)
-    .then(() => {
+  auth.signInWithEmailAndPassword(emailInput.value, passwordInput.value)
+    .then((userCredential) => {
       loginSuccess.textContent = 'Zalogowano pomyślnie!';
-      loginError.textContent = '';
     })
-    .catch(err => {
-      loginError.textContent = 'Błąd logowania: ' + err.message;
-      loginSuccess.textContent = '';
+    .catch((error) => {
+      loginError.textContent = 'Błąd logowania: ' + error.message;
     });
-}
+});
 
-// REJESTRACJA
-function register() {
+registerBtn.addEventListener('click', () => {
   loginError.textContent = '';
   loginSuccess.textContent = '';
-
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value.trim();
-
-  if (!email || !password) {
-    loginError.textContent = 'Wpisz email i hasło!';
-    return;
-  }
-
-  auth.createUserWithEmailAndPassword(email, password)
-    .then(() => {
-      loginSuccess.textContent = 'Konto zostało utworzone! Możesz teraz się zalogować.';
-      loginError.textContent = '';
-      document.getElementById('email').value = '';
-      document.getElementById('password').value = '';
+  auth.createUserWithEmailAndPassword(emailInput.value, passwordInput.value)
+    .then((userCredential) => {
+      loginSuccess.textContent = 'Rejestracja zakończona sukcesem!';
     })
-    .catch(err => {
-      loginError.textContent = 'Błąd rejestracji: ' + err.message;
-      loginSuccess.textContent = '';
+    .catch((error) => {
+      loginError.textContent = 'Błąd rejestracji: ' + error.message;
     });
-}
-
-// PODGLĄD AKTUALNEGO UŻYTKOWNIKA
-auth.onAuthStateChanged(user => {
-  if (user) {
-    console.log('Zalogowany użytkownik:', user.email);
-  } else {
-    console.log('Brak zalogowanego użytkownika.');
-  }
-});
+})
