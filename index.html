@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Logowanie i Rejestracja</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 500px; margin: auto; padding: 20px; }
+    input { width: 100%; padding: 10px; margin: 5px 0; }
+    button { padding: 10px 15px; margin: 5px 5px 5px 0; }
+    #loginError { color: red; }
+    #loginSuccess { color: green; }
+  </style>
+</head>
+<body>
+  <h1>Logowanie / Rejestracja</h1>
+
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Hasło">
+
+  <div>
+    <button onclick="login()">Zaloguj się</button>
+    <button onclick="register()">Zarejestruj się</button>
+  </div>
+
+  <p id="loginError"></p>
+  <p id="loginSuccess"></p>
+
+  <script>
+    // KONFIGURACJA FIREBASE - wstaw swoje dane
+    const firebaseConfig = {
+      apiKey: "1:346817626388:web:4392536d75afabad728201",
+      authDomain: "gvideo-e3622.firebaseapp.com",
+      projectId: "gvideo-e3622",
+      storageBucket: "gvideo-e3622.appspot.com",
+      messagingSenderId: "346817626388",
+      appId: "1:346817626388:web:4392536d75afabad728201"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    const loginError = document.getElementById('loginError');
+    const loginSuccess = document.getElementById('loginSuccess');
+
+    // FUNKCJA LOGOWANIA
+    function login() {
+      loginError.textContent = '';
+      loginSuccess.textContent = '';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!email || !password) {
+        loginError.textContent = 'Wpisz email i hasło!';
+        return;
+      }
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+          loginSuccess.textContent = 'Zalogowano pomyślnie!';
+          loginError.textContent = '';
+        })
+        .catch(err => {
+          loginError.textContent = 'Błąd logowania: ' + err.message;
+          loginSuccess.textContent = '';
+        });
+    }
+
+    // FUNKCJA REJESTRACJI
+    function register() {
+      loginError.textContent = '';
+      loginSuccess.textContent = '';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!email || !password) {
+        loginError.textContent = 'Wpisz email i hasło!';
+        return;
+      }
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(() => {
+          loginSuccess.textContent = 'Konto zostało utworzone! Możesz teraz się zalogować.';
+          loginError.textContent = '';
+          document.getElementById('email').value = '';
+          document.getElementById('password').value = '';
+        })
+        .catch(err => {
+          loginError.textContent = 'Błąd rejestracji: ' + err.message;
+          loginSuccess.textContent = '';
+        });
+    }
+
+    // PODGLĄD AKTUALNEGO UŻYTKOWNIKA
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        console.log('Zalogowany użytkownik:', user.email);
+      } else {
+        console.log('Brak zalogowanego użytkownika.');
+      }
+    });
+  </script>
+</body>
+</html>
