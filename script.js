@@ -7,11 +7,15 @@ const firebaseConfig = {
   messagingSenderId: "346817626388",
   appId: "1:346817626388:web:4392536d75afabad728201"
 };
+
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
 const loginError = document.getElementById('loginError');
 const loginSuccess = document.getElementById('loginSuccess');
+
+document.getElementById('loginBtn').addEventListener('click', login);
+document.getElementById('registerBtn').addEventListener('click', register);
 
 // LOGOWANIE
 function login() {
